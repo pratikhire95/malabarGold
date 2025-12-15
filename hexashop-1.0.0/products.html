@@ -34,6 +34,59 @@ https://templatemo.com/tm-571-hexashop
     </head>
     
     <body>
+
+        <script>
+        window.adobeDataLayer = window.adobeDataLayer || [];
+        
+        // Page View Event
+        window.adobeDataLayer.push({
+            "event": "pageView",
+            "page": {
+                "pageName": "Products",
+                "siteSection": "Catalog",
+                "pageType": "category",
+                "loginStatus": ""
+            }
+        });
+        
+        // Link Click Event Handler
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click tracking for navigation links
+            document.querySelectorAll('a').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    var linkText = this.textContent.trim();
+                    var linkHref = this.getAttribute('href');
+                    
+                    window.adobeDataLayer.push({
+                        "event": "linkClick",
+                        "page": {
+                            "linkName": linkText || linkHref,
+                            "linkPosition": "Navigation",
+                            "linkURL": linkHref,
+                            "loginStatus": ""
+                        }
+                    });
+                });
+            });
+            
+            // Product click tracking
+            document.querySelectorAll('.item .hover-content a').forEach(function(productLink) {
+                productLink.addEventListener('click', function(e) {
+                    var productName = this.closest('.item').querySelector('h4').textContent.trim();
+                    
+                    window.adobeDataLayer.push({
+                        "event": "linkClick",
+                        "page": {
+                            "linkName": "product:" + productName,
+                            "linkPosition": "Product Grid",
+                            "linkURL": this.getAttribute('href'),
+                            "loginStatus": ""
+                        }
+                    });
+                });
+            });
+        });
+    </script>
     
     <!-- ***** Preloader Start ***** -->
     <div id="preloader">

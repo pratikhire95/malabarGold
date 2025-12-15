@@ -33,6 +33,42 @@ https://templatemo.com/tm-571-hexashop
   </head>
     
     <body>
+        <!-- Adobe Data Layer Scripts -->
+    <script>
+        window.adobeDataLayer = window.adobeDataLayer || [];
+        
+        // Page View Event
+        window.adobeDataLayer.push({
+            "event": "pageView",
+            "page": {
+                "pageName": "About Us",
+                "siteSection": "Information",
+                "pageType": "about",
+                "loginStatus": ""
+            }
+        });
+        
+        // Link Click Event Handler
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click tracking for navigation links
+            document.querySelectorAll('a').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    var linkText = this.textContent.trim();
+                    var linkHref = this.getAttribute('href');
+                    
+                    window.adobeDataLayer.push({
+                        "event": "linkClick",
+                        "page": {
+                            "linkName": linkText || linkHref,
+                            "linkPosition": "Navigation",
+                            "linkURL": linkHref,
+                            "loginStatus": ""
+                        }
+                    });
+                });
+            });
+        });
+    </script>
     
     <!-- ***** Preloader Start ***** -->
     <div id="preloader">
