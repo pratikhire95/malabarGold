@@ -69,12 +69,26 @@ https://templatemo.com/tm-571-hexashop
                 link.addEventListener('click', function(e) {
                     var linkText = this.textContent.trim();
                     var linkHref = this.getAttribute('href');
+                    var linkPosition = "Navigation";
+                    
+                    // Determine link position based on context
+                    if (this.closest('header')) {
+                        linkPosition = "Header Navigation";
+                    } else if (this.closest('footer')) {
+                        linkPosition = "Footer";
+                    } else if (this.closest('.main-banner')) {
+                        linkPosition = "Hero Banner";
+                    } else if (this.closest('#social')) {
+                        linkPosition = "Social Media";
+                    } else if (this.closest('.subscribe')) {
+                        linkPosition = "Newsletter";
+                    }
                     
                     window.adobeDataLayer.push({
                         "event": "linkClick",
                         "page": {
                             "linkName": linkText || linkHref,
-                            "linkPosition": "Navigation",
+                            "linkPosition": linkPosition,
                             "linkURL": linkHref,
                             "loginStatus": ""
                         }
@@ -82,18 +96,90 @@ https://templatemo.com/tm-571-hexashop
                 });
             });
             
-            // Specific tracking for main banner buttons
-            document.querySelectorAll('.main-border-button a').forEach(function(button) {
-                button.addEventListener('click', function(e) {
+            // Product interaction tracking
+            document.querySelectorAll('.hover-content a').forEach(function(productLink) {
+                productLink.addEventListener('click', function(e) {
+                    var productItem = this.closest('.item');
+                    var productName = productItem ? productItem.querySelector('h4').textContent.trim() : 'Unknown Product';
+                    var productPrice = productItem ? productItem.querySelector('span').textContent.trim() : '';
+                    var actionType = '';
+                    
+                    // Determine action type based on icon
+                    if (this.querySelector('.fa-eye')) {
+                        actionType = 'view';
+                    } else if (this.querySelector('.fa-star')) {
+                        actionType = 'favorite';
+                    } else if (this.querySelector('.fa-shopping-cart')) {
+                        actionType = 'add_to_cart';
+                    }
+                    
                     window.adobeDataLayer.push({
-                        "event": "linkClick",
+                        "event": "productInteraction",
                         "page": {
-                            "linkName": "banner:" + this.textContent.trim(),
-                            "linkPosition": "Hero Banner",
+                            "productName": productName,
+                            "productPrice": productPrice,
+                            "actionType": actionType,
                             "linkURL": this.getAttribute('href'),
                             "loginStatus": ""
                         }
                     });
+                });
+            });
+            
+            // Category section clicks (Men's, Women's, Kid's sections)
+            document.querySelectorAll('#men .main-border-button a, #women .main-border-button a, #kids .main-border-button a').forEach(function(categoryButton) {
+                categoryButton.addEventListener('click', function(e) {
+                    var sectionId = this.closest('section').getAttribute('id');
+                    
+                    window.adobeDataLayer.push({
+                        "event": "categoryClick",
+                        "page": {
+                            "categoryName": sectionId,
+                            "linkName": this.textContent.trim(),
+                            "linkPosition": "Category Section",
+                            "linkURL": this.getAttribute('href'),
+                            "loginStatus": ""
+                        }
+                    });
+                });
+            });
+            
+            // Newsletter subscription form tracking
+            document.getElementById('subscribe').addEventListener('submit', function(e) {
+                window.adobeDataLayer.push({
+                    "event": "formSubmit",
+                    "page": {
+                        "formName": "Newsletter Subscription",
+                        "formType": "newsletter",
+                        "loginStatus": ""
+                    }
+                });
+            });
+            
+            // Social media clicks
+            document.querySelectorAll('#social a').forEach(function(socialLink) {
+                socialLink.addEventListener('click', function(e) {
+                    var socialPlatform = this.querySelector('h6') ? this.querySelector('h6').textContent.trim() : 'Instagram';
+                    
+                    window.adobeDataLayer.push({
+                        "event": "socialClick",
+                        "page": {
+                            "socialPlatform": socialPlatform,
+                            "linkURL": this.getAttribute('href'),
+                            "loginStatus": ""
+                        }
+                    });
+                });
+            });
+            
+            // Menu trigger (mobile menu) tracking
+            document.querySelector('.menu-trigger').addEventListener('click', function(e) {
+                window.adobeDataLayer.push({
+                    "event": "menuToggle",
+                    "page": {
+                        "actionType": "mobile_menu_toggle",
+                        "loginStatus": ""
+                    }
                 });
             });
         });

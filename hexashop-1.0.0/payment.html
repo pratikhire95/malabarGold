@@ -32,6 +32,79 @@ https://templatemo.com/tm-571-hexashop
  </head>
     
     <body>
+        <!-- Adobe Data Layer Scripts -->
+    <script>
+        window.adobeDataLayer = window.adobeDataLayer || [];
+        
+        // Page View Event
+        window.adobeDataLayer.push({
+            "event": "pageView",
+            "page": {
+                "pageName": "Payment",
+                "siteSection": "Checkout",
+                "pageType": "payment",
+                "loginStatus": ""
+            }
+        });
+        
+        // Link Click Event Handler
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click tracking for navigation links
+            document.querySelectorAll('a').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    var linkText = this.textContent.trim();
+                    var linkHref = this.getAttribute('href');
+                    var linkPosition = "Navigation";
+                    
+                    // Determine link position based on context
+                    if (this.closest('header')) {
+                        linkPosition = "Header Navigation";
+                    } else if (this.closest('footer')) {
+                        linkPosition = "Footer";
+                    } else if (this.closest('.right-content')) {
+                        linkPosition = "Payment Options";
+                    }
+                    
+                    window.adobeDataLayer.push({
+                        "event": "linkClick",
+                        "page": {
+                            "linkName": linkText || linkHref,
+                            "linkPosition": linkPosition,
+                            "linkURL": linkHref,
+                            "loginStatus": ""
+                        }
+                    });
+                });
+            });
+            
+            // Payment method selection tracking
+            document.querySelectorAll('.right-content ul li a').forEach(function(paymentLink) {
+                paymentLink.addEventListener('click', function(e) {
+                    var paymentMethod = this.textContent.trim();
+                    
+                    window.adobeDataLayer.push({
+                        "event": "paymentMethodSelect",
+                        "page": {
+                            "paymentMethod": paymentMethod,
+                            "actionType": "payment_method_selection",
+                            "loginStatus": ""
+                        }
+                    });
+                });
+            });
+            
+            // Menu trigger (mobile menu) tracking
+            document.querySelector('.menu-trigger').addEventListener('click', function(e) {
+                window.adobeDataLayer.push({
+                    "event": "menuToggle",
+                    "page": {
+                        "actionType": "mobile_menu_toggle",
+                        "loginStatus": ""
+                    }
+                });
+            });
+        });
+    </script>
     
     <!-- ***** Preloader Start ***** -->
     <div id="preloader">

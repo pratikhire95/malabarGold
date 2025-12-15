@@ -55,16 +55,53 @@ https://templatemo.com/tm-571-hexashop
                 link.addEventListener('click', function(e) {
                     var linkText = this.textContent.trim();
                     var linkHref = this.getAttribute('href');
+                    var linkPosition = "Navigation";
+                    
+                    // Determine link position based on context
+                    if (this.closest('header')) {
+                        linkPosition = "Header Navigation";
+                    } else if (this.closest('footer')) {
+                        linkPosition = "Footer";
+                    }
                     
                     window.adobeDataLayer.push({
                         "event": "linkClick",
                         "page": {
                             "linkName": linkText || linkHref,
-                            "linkPosition": "Navigation",
+                            "linkPosition": linkPosition,
                             "linkURL": linkHref,
                             "loginStatus": ""
                         }
                     });
+                });
+            });
+            
+            // Service item interaction tracking (for loan information)
+            document.querySelectorAll('.service-item').forEach(function(serviceItem) {
+                serviceItem.addEventListener('click', function(e) {
+                    var loanType = this.querySelector('.loan-type') ? this.querySelector('.loan-type').textContent.trim() : 'Unknown Loan';
+                    var loanDigit = this.querySelector('.loan-digit') ? this.querySelector('.loan-digit').textContent.trim() : '';
+                    
+                    window.adobeDataLayer.push({
+                        "event": "serviceInteraction",
+                        "page": {
+                            "serviceName": loanType,
+                            "serviceDetails": loanDigit,
+                            "actionType": "service_click",
+                            "loginStatus": ""
+                        }
+                    });
+                });
+            });
+            
+            // Menu trigger (mobile menu) tracking
+            document.querySelector('.menu-trigger').addEventListener('click', function(e) {
+                window.adobeDataLayer.push({
+                    "event": "menuToggle",
+                    "page": {
+                        "actionType": "mobile_menu_toggle",
+                        "loginStatus": ""
+                    }
                 });
             });
         });
