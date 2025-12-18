@@ -41,6 +41,10 @@ TemplateMo 571 Hexashop
 https://templatemo.com/tm-571-hexashop
 
 -->
+    <script
+      src="https://assets.adobedtm.com/0e9a0418089e/6d4e10f9c84c/launch-fbc4a6fd8274-development.min.js"
+      async
+    ></script>
   </head>
 
   <body>
@@ -62,54 +66,63 @@ https://templatemo.com/tm-571-hexashop
           viewportSize: window.innerWidth + "x" + window.innerHeight,
           language: navigator.language,
           loginStatus: "guest",
-          deviceType: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? "mobile" : "desktop",
-          browserName: navigator.userAgent.includes('Chrome') ? 'Chrome' : 
-                      navigator.userAgent.includes('Firefox') ? 'Firefox' : 
-                      navigator.userAgent.includes('Safari') ? 'Safari' : 'Other',
-          totalProducts: document.querySelectorAll('.item').length,
+          deviceType: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent)
+            ? "mobile"
+            : "desktop",
+          browserName: navigator.userAgent.includes("Chrome")
+            ? "Chrome"
+            : navigator.userAgent.includes("Firefox")
+            ? "Firefox"
+            : navigator.userAgent.includes("Safari")
+            ? "Safari"
+            : "Other",
+          totalProducts: document.querySelectorAll(".item").length,
           currentPage: 2,
           totalPages: 4,
           productsPerPage: 9,
           categoryFilter: "all",
-          sortOrder: "default"
+          sortOrder: "default",
         },
         ecommerce: {
           currencyCode: "USD",
-          impressions: []
-        }
+          impressions: [],
+        },
       });
 
       // Collect product impressions for enhanced ecommerce tracking
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener("DOMContentLoaded", function () {
         var impressions = [];
-        document.querySelectorAll('.item').forEach(function(item, index) {
-          var productName = item.querySelector('h4').textContent.trim();
-          var productPrice = item.querySelector('span').textContent.trim().replace('$', '');
-          var productImage = item.querySelector('img').getAttribute('src');
-          
+        document.querySelectorAll(".item").forEach(function (item, index) {
+          var productName = item.querySelector("h4").textContent.trim();
+          var productPrice = item
+            .querySelector("span")
+            .textContent.trim()
+            .replace("$", "");
+          var productImage = item.querySelector("img").getAttribute("src");
+
           // Determine category based on image path
-          var category = 'Unknown';
-          if (productImage.includes('men-')) category = 'Men';
-          else if (productImage.includes('women-')) category = 'Women';
-          else if (productImage.includes('kid-')) category = 'Kids';
-          
+          var category = "Unknown";
+          if (productImage.includes("men-")) category = "Men";
+          else if (productImage.includes("women-")) category = "Women";
+          else if (productImage.includes("kid-")) category = "Kids";
+
           impressions.push({
             name: productName,
-            id: 'PROD-' + (index + 1).toString().padStart(3, '0'),
+            id: "PROD-" + (index + 1).toString().padStart(3, "0"),
             price: productPrice,
             category: category,
             position: index + 1,
-            list: 'Product Listing Page'
+            list: "Product Listing Page",
           });
         });
-        
+
         // Push product impressions to data layer
         window.adobeDataLayer.push({
-          event: 'productImpressions',
+          event: "productImpressions",
           ecommerce: {
-            currencyCode: 'USD',
-            impressions: impressions
-          }
+            currencyCode: "USD",
+            impressions: impressions,
+          },
         });
       });
 
@@ -154,17 +167,22 @@ https://templatemo.com/tm-571-hexashop
                 .textContent.trim();
               var productPrice = productItem
                 .querySelector("span")
-                .textContent.trim().replace('$', '');
-              var productImage = productItem.querySelector('img').getAttribute('src');
-              var productIndex = Array.from(document.querySelectorAll('.item')).indexOf(productItem);
+                .textContent.trim()
+                .replace("$", "");
+              var productImage = productItem
+                .querySelector("img")
+                .getAttribute("src");
+              var productIndex = Array.from(
+                document.querySelectorAll(".item")
+              ).indexOf(productItem);
               var actionType = "";
               var eventName = "";
 
               // Determine category based on image path
-              var category = 'Unknown';
-              if (productImage.includes('men-')) category = 'Men';
-              else if (productImage.includes('women-')) category = 'Women';
-              else if (productImage.includes('kid-')) category = 'Kids';
+              var category = "Unknown";
+              if (productImage.includes("men-")) category = "Men";
+              else if (productImage.includes("women-")) category = "Women";
+              else if (productImage.includes("kid-")) category = "Kids";
 
               // Determine action type and event name based on icon
               if (this.querySelector(".fa-eye")) {
@@ -186,11 +204,12 @@ https://templatemo.com/tm-571-hexashop
                   siteSection: "Catalog",
                   pageType: "category",
                   loginStatus: "guest",
-                  timestamp: new Date().toISOString()
+                  timestamp: new Date().toISOString(),
                 },
                 product: {
                   productName: productName,
-                  productID: 'PROD-' + (productIndex + 1).toString().padStart(3, '0'),
+                  productID:
+                    "PROD-" + (productIndex + 1).toString().padStart(3, "0"),
                   productPrice: productPrice,
                   productCategory: category,
                   productPosition: productIndex + 1,
@@ -201,25 +220,29 @@ https://templatemo.com/tm-571-hexashop
                   productReviews: Math.floor(Math.random() * 100) + 50,
                   actionType: actionType,
                   linkPosition: "Product Grid",
-                  linkURL: this.getAttribute("href")
+                  linkURL: this.getAttribute("href"),
                 },
                 ecommerce: {
                   currencyCode: "USD",
                   click: {
                     actionField: {
                       list: "Product Listing Page",
-                      action: actionType
+                      action: actionType,
                     },
-                    products: [{
-                      name: productName,
-                      id: 'PROD-' + (productIndex + 1).toString().padStart(3, '0'),
-                      price: productPrice,
-                      category: category,
-                      position: productIndex + 1,
-                      list: "Product Listing Page"
-                    }]
-                  }
-                }
+                    products: [
+                      {
+                        name: productName,
+                        id:
+                          "PROD-" +
+                          (productIndex + 1).toString().padStart(3, "0"),
+                        price: productPrice,
+                        category: category,
+                        position: productIndex + 1,
+                        list: "Product Listing Page",
+                      },
+                    ],
+                  },
+                },
               });
             });
           });
