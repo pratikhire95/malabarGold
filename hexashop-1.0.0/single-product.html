@@ -44,166 +44,93 @@ https://templatemo.com/tm-571-hexashop
   </head>
 
   <body>
-    <!-- Enhanced Adobe Data Layer Scripts -->
+    <!-- Adobe Data Layer Scripts -->
     <script>
       window.adobeDataLayer = window.adobeDataLayer || [];
 
-      // Get product details dynamically
-      function getProductDetails() {
-        var productName = document
-          .querySelector(".right-content h4")
-          .textContent.trim();
-        var productPrice = document
-          .querySelector(".right-content .price")
-          .textContent.trim()
-          .replace("$", "");
-        var productImages = Array.from(
-          document.querySelectorAll(".left-images img")
-        ).map((img) => img.getAttribute("src"));
-        var productRating = document.querySelectorAll(
-          ".right-content .stars .fa-star"
-        ).length;
-        var totalPrice = document
-          .querySelector(".total h4")
-          .textContent.trim()
-          .replace("Total: $", "");
+      // Enhanced Page View Event with comprehensive product data
+      document.addEventListener("DOMContentLoaded", function () {
+        var productName = document.querySelector(".right-content h4").textContent.trim();
+        var productPrice = document.querySelector(".right-content .price").textContent.trim().replace("$", "");
+        var productImages = Array.from(document.querySelectorAll(".left-images img")).map((img) => img.getAttribute("src"));
+        var productRating = document.querySelectorAll(".right-content .stars .fa-star").length;
 
-        return {
+        var productDetails = {
           name: productName,
-          id: "PROD-004", // New Green Jacket ID
+          id: "PROD-004",
           price: productPrice,
           category: "Women",
           brand: "HexaShop",
           variant: "Green",
           images: productImages,
           rating: productRating,
-          totalPrice: totalPrice,
           availability: "in_stock",
-          description: document
-            .querySelector(".right-content span")
-            .textContent.trim(),
+          description: document.querySelector(".right-content span").textContent.trim(),
         };
-      }
 
-      // Enhanced Page View Event with comprehensive product data
-      window.adobeDataLayer.push({
-        event: "pageView",
-        page: {
-          pageName: "Single Product - New Green Jacket",
-          siteSection: "Product Detail",
-          pageType: "product",
-          pageURL: window.location.href,
-          referrer: document.referrer,
-          timestamp: new Date().toISOString(),
-          userAgent: navigator.userAgent,
-          screenResolution: screen.width + "x" + screen.height,
-          viewportSize: window.innerWidth + "x" + window.innerHeight,
-          language: navigator.language,
-          loginStatus: "guest",
-          deviceType: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent)
-            ? "mobile"
-            : "desktop",
-          browserName: navigator.userAgent.includes("Chrome")
-            ? "Chrome"
-            : navigator.userAgent.includes("Firefox")
-            ? "Firefox"
-            : navigator.userAgent.includes("Safari")
-            ? "Safari"
-            : "Other",
-        },
-        product: {
-          productName: "New Green Jacket",
-          productID: "PROD-004",
-          productPrice: "75.00",
-          productCategory: "Women",
-          productBrand: "HexaShop",
-          productVariant: "Green",
-          productAvailability: "in_stock",
-          productRating: "5.0",
-          productReviews: 87,
-          productImages: 2,
-          productDescription:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod kon tempor incididunt ut labore.",
-        },
-        ecommerce: {
-          currencyCode: "USD",
-          detail: {
-            actionField: {
-              list: "Product Detail Page",
-            },
-            products: [
-              {
-                name: "New Green Jacket",
-                id: "PROD-004",
-                price: "75.00",
-                category: "Women",
-                brand: "HexaShop",
-                variant: "Green",
-              },
-            ],
+        // Enhanced Page View Event
+        window.adobeDataLayer.push({
+          event: "pageView",
+          page: {
+            pageName: "Single Product - New Green Jacket",
+            siteSection: "Product Detail",
+            pageType: "product",
+            pageURL: window.location.href,
+            referrer: document.referrer,
+            timestamp: new Date().toISOString(),
+            language: navigator.language,
+            loginStatus: "guest",
+            deviceType: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? "mobile" : "desktop",
+            browserName: navigator.userAgent.includes("Chrome") ? "Chrome" : 
+                         navigator.userAgent.includes("Firefox") ? "Firefox" : 
+                         navigator.userAgent.includes("Safari") ? "Safari" : "Other"
           },
-        },
-      });
+          product: productDetails,
+          ecommerce: {
+            currencyCode: "USD",
+            detail: {
+              actionField: {
+                list: "Product Detail Page"
+              },
+              products: [{
+                name: productDetails.name,
+                id: productDetails.id,
+                price: productDetails.price,
+                category: productDetails.category,
+                brand: productDetails.brand,
+                variant: productDetails.variant
+              }]
+            }
+          }
+        });
 
-      // Enhanced Event Handlers
-      document.addEventListener("DOMContentLoaded", function () {
-        var productDetails = getProductDetails();
-
-        // Enhanced navigation link tracking
+        // Link Click Event Handler for all interactions
         document.querySelectorAll("a").forEach(function (link) {
           link.addEventListener("click", function (e) {
             var linkText = this.textContent.trim();
             var linkHref = this.getAttribute("href");
             var linkPosition = "Navigation";
+            var actionType = "navigation";
 
-            // Determine link position based on context
+            // Determine link position and action type based on context
             if (this.closest("header")) {
               linkPosition = "Header Navigation";
             } else if (this.closest("footer")) {
               linkPosition = "Footer";
             } else if (this.closest(".main-border-button")) {
               linkPosition = "Product Action";
+              actionType = "add_to_cart";
             }
 
-            window.adobeDataLayer.push({
-              event: "linkClick",
-              page: {
-                pageName: "Single Product - New Green Jacket",
-                linkName: linkText || linkHref,
-                linkPosition: linkPosition,
-                linkURL: linkHref,
-                loginStatus: "guest",
-                timestamp: new Date().toISOString(),
-              },
-              product: {
-                productName: productDetails.name,
-                productID: productDetails.id,
-                productCategory: productDetails.category,
-              },
-            });
-          });
-        });
-
-        // Enhanced Add to Cart tracking with comprehensive ecommerce data
-        document
-          .querySelector(".main-border-button a")
-          .addEventListener("click", function (e) {
-            var quantity = document.querySelector(
-              'input[name="quantity"]'
-            ).value;
-            var totalValue = (
-              parseFloat(productDetails.price) * parseInt(quantity)
-            ).toFixed(2);
-
-            window.adobeDataLayer.push({
-              event: "addToCart",
-              page: {
-                pageName: "Single Product - New Green Jacket",
-                siteSection: "Product Detail",
-                loginStatus: "guest",
-                timestamp: new Date().toISOString(),
-              },
-              product: {
+            // For Add to Cart button, include enhanced ecommerce data
+            var ecommerceData = null;
+            var productData = null;
+            
+            if (actionType === "add_to_cart") {
+              var quantity = document.querySelector('input[name="quantity"]').value;
+              var totalValue = (parseFloat(productDetails.price) * parseInt(quantity)).toFixed(2);
+              
+              productData = {
                 productName: productDetails.name,
                 productID: productDetails.id,
                 productPrice: productDetails.price,
@@ -211,184 +138,127 @@ https://templatemo.com/tm-571-hexashop
                 productBrand: productDetails.brand,
                 productVariant: productDetails.variant,
                 quantity: quantity,
-                totalValue: totalValue,
-                actionType: "add_to_cart",
-              },
-              ecommerce: {
+                totalValue: totalValue
+              };
+
+              ecommerceData = {
                 currencyCode: "USD",
                 add: {
                   actionField: {
-                    list: "Product Detail Page",
+                    list: "Product Detail Page"
                   },
-                  products: [
-                    {
-                      name: productDetails.name,
-                      id: productDetails.id,
-                      price: productDetails.price,
-                      category: productDetails.category,
-                      brand: productDetails.brand,
-                      variant: productDetails.variant,
-                      quantity: parseInt(quantity),
-                    },
-                  ],
-                },
-              },
-              cart: {
-                cartValue: totalValue,
-                cartItems: 1,
-                cartQuantity: parseInt(quantity),
-              },
-            });
-          });
+                  products: [{
+                    name: productDetails.name,
+                    id: productDetails.id,
+                    price: productDetails.price,
+                    category: productDetails.category,
+                    brand: productDetails.brand,
+                    variant: productDetails.variant,
+                    quantity: parseInt(quantity)
+                  }]
+                }
+              };
+            }
 
-        // Enhanced quantity change tracking
-        document
-          .querySelectorAll(".quantity .minus, .quantity .plus")
-          .forEach(function (qtyButton) {
-            qtyButton.addEventListener("click", function (e) {
-              setTimeout(function () {
-                // Wait for quantity to update
-                var actionType = qtyButton.classList.contains("minus")
-                  ? "decrease_quantity"
-                  : "increase_quantity";
-                var newQuantity = document.querySelector(
-                  'input[name="quantity"]'
-                ).value;
-                var newTotalValue = (
-                  parseFloat(productDetails.price) * parseInt(newQuantity)
-                ).toFixed(2);
-
-                window.adobeDataLayer.push({
-                  event: "quantityChange",
-                  page: {
-                    pageName: "Single Product - New Green Jacket",
-                    siteSection: "Product Detail",
-                    loginStatus: "guest",
-                    timestamp: new Date().toISOString(),
-                  },
-                  product: {
-                    productName: productDetails.name,
-                    productID: productDetails.id,
-                    productPrice: productDetails.price,
-                    productCategory: productDetails.category,
-                    actionType: actionType,
-                    previousQuantity:
-                      actionType === "increase_quantity"
-                        ? parseInt(newQuantity) - 1
-                        : parseInt(newQuantity) + 1,
-                    newQuantity: newQuantity,
-                    newTotalValue: newTotalValue,
-                  },
-                });
-              }, 100);
-            });
-          });
-
-        // Product image interaction tracking
-        document
-          .querySelectorAll(".left-images img")
-          .forEach(function (image, index) {
-            image.addEventListener("click", function (e) {
-              window.adobeDataLayer.push({
-                event: "productImageClick",
-                page: {
-                  pageName: "Single Product - New Green Jacket",
-                  siteSection: "Product Detail",
-                  loginStatus: "guest",
-                  timestamp: new Date().toISOString(),
-                },
-                product: {
-                  productName: productDetails.name,
-                  productID: productDetails.id,
-                  imageIndex: index + 1,
-                  imageURL: this.getAttribute("src"),
-                  actionType: "image_view",
-                },
-              });
-            });
-          });
-
-        // Product rating interaction (stars)
-        document
-          .querySelectorAll(".right-content .stars .fa-star")
-          .forEach(function (star, index) {
-            star.addEventListener("click", function (e) {
-              window.adobeDataLayer.push({
-                event: "productRatingInteraction",
-                page: {
-                  pageName: "Single Product - New Green Jacket",
-                  siteSection: "Product Detail",
-                  loginStatus: "guest",
-                  timestamp: new Date().toISOString(),
-                },
-                product: {
-                  productName: productDetails.name,
-                  productID: productDetails.id,
-                  ratingInteraction: index + 1,
-                  currentRating: productDetails.rating,
-                  actionType: "rating_click",
-                },
-              });
-            });
-          });
-
-        // Menu trigger (mobile menu) tracking
-        document
-          .querySelector(".menu-trigger")
-          .addEventListener("click", function (e) {
             window.adobeDataLayer.push({
-              event: "menuToggle",
+              event: "linkClick",
               page: {
                 pageName: "Single Product - New Green Jacket",
                 siteSection: "Product Detail",
-                actionType: "mobile_menu_toggle",
+                pageType: "product",
+                linkName: linkText || linkHref,
+                linkPosition: linkPosition,
+                linkURL: linkHref,
                 loginStatus: "guest",
                 timestamp: new Date().toISOString(),
+                actionType: actionType
               },
+              product: productData,
+              ecommerce: ecommerceData
             });
           });
+        });
 
-        // Page scroll tracking for engagement
-        var scrollThresholds = [25, 50, 75, 100];
-        var scrollTracked = [];
-
-        window.addEventListener("scroll", function () {
-          var scrollPercent = Math.round(
-            (window.scrollY /
-              (document.body.scrollHeight - window.innerHeight)) *
-              100
-          );
-
-          scrollThresholds.forEach(function (threshold) {
-            if (
-              scrollPercent >= threshold &&
-              !scrollTracked.includes(threshold)
-            ) {
-              scrollTracked.push(threshold);
+        // Quantity change tracking
+        document.querySelectorAll(".quantity .minus, .quantity .plus").forEach(function (qtyButton) {
+          qtyButton.addEventListener("click", function (e) {
+            setTimeout(function () {
+              var actionType = qtyButton.classList.contains("minus") ? "decrease_quantity" : "increase_quantity";
+              var newQuantity = document.querySelector('input[name="quantity"]').value;
+              var newTotalValue = (parseFloat(productDetails.price) * parseInt(newQuantity)).toFixed(2);
 
               window.adobeDataLayer.push({
-                event: "pageScroll",
+                event: "linkClick",
                 page: {
                   pageName: "Single Product - New Green Jacket",
                   siteSection: "Product Detail",
-                  scrollPercentage: threshold,
+                  pageType: "product",
+                  linkName: actionType === "increase_quantity" ? "+" : "-",
+                  linkPosition: "Quantity Controls",
+                  linkURL: "#",
                   loginStatus: "guest",
                   timestamp: new Date().toISOString(),
+                  actionType: actionType
                 },
                 product: {
                   productName: productDetails.name,
                   productID: productDetails.id,
-                  engagementLevel:
-                    threshold >= 75
-                      ? "high"
-                      : threshold >= 50
-                      ? "medium"
-                      : "low",
-                },
+                  productPrice: productDetails.price,
+                  productCategory: productDetails.category,
+                  newQuantity: newQuantity,
+                  newTotalValue: newTotalValue
+                }
               });
-            }
+            }, 100);
           });
         });
+
+        // Product image interaction tracking
+        document.querySelectorAll(".left-images img").forEach(function (image, index) {
+          image.addEventListener("click", function (e) {
+            window.adobeDataLayer.push({
+              event: "linkClick",
+              page: {
+                pageName: "Single Product - New Green Jacket",
+                siteSection: "Product Detail",
+                pageType: "product",
+                linkName: "Product Image " + (index + 1),
+                linkPosition: "Product Images",
+                linkURL: this.getAttribute("src"),
+                loginStatus: "guest",
+                timestamp: new Date().toISOString(),
+                actionType: "image_view"
+              },
+              product: {
+                productName: productDetails.name,
+                productID: productDetails.id,
+                imageIndex: index + 1,
+                imageURL: this.getAttribute("src")
+              }
+            });
+          });
+        });
+
+        // Menu trigger (mobile menu) tracking
+        var menuTrigger = document.querySelector(".menu-trigger");
+        if (menuTrigger) {
+          menuTrigger.addEventListener("click", function (e) {
+            window.adobeDataLayer.push({
+              event: "linkClick",
+              page: {
+                pageName: "Single Product - New Green Jacket",
+                siteSection: "Product Detail",
+                pageType: "product",
+                linkName: "Menu",
+                linkPosition: "Header Navigation",
+                linkURL: "#",
+                loginStatus: "guest",
+                timestamp: new Date().toISOString(),
+                actionType: "mobile_menu_toggle"
+              }
+            });
+          });
+        }
       });
     </script>
 
@@ -683,64 +553,5 @@ https://templatemo.com/tm-571-hexashop
       });
     </script>
 
-    <script>
-      window.adobeDataLayer = window.adobeDataLayer || [];
-      window.adobeDataLayer.push({
-        event: "page track",
-        page: {
-          pageName: "singleproduct",
-          pageType: "product",
-          experienceType: "desktop",
-          category: "generic",
-          productName: "New Green Jacket",
-          price: "75",
-          quantity: "1",
-        },
-      });
-      document.querySelector(
-        "body > header > div > div > div > nav > ul > li:nth-child(5) > ul > li:nth-child(2) > a"
-      ).onclick = function () {
-        window.adobeDataLayer.push({
-          event: "link track",
-          page: {
-            clickedElement: "Products",
-          },
-        });
-      };
-      document.querySelector(
-        "body > header > div > div > div > nav > ul > li:nth-child(5) > ul > li:nth-child(3) > a"
-      ).onclick = function () {
-        window.adobeDataLayer.push({
-          event: "link track",
-          page: {
-            clickedElement: "Single Product",
-          },
-        });
-      };
-      document.querySelector("#MenPage").onclick = function () {
-        window.adobeDataLayer.push({
-          event: "link track",
-          page: {
-            clickedElement: "men",
-          },
-        });
-      };
-      document.querySelector("#KidPage").onclick = function () {
-        window.adobeDataLayer.push({
-          event: "link track",
-          page: {
-            clickedElement: "kids",
-          },
-        });
-      };
-      document.querySelector("#WomenPage").onclick = function () {
-        window.adobeDataLayer.push({
-          event: "link track",
-          page: {
-            clickedElement: "women",
-          },
-        });
-      };
-    </script>
   </body>
 </html>

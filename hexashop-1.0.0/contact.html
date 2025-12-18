@@ -37,60 +37,147 @@ https://templatemo.com/tm-571-hexashop
     <script>
         window.adobeDataLayer = window.adobeDataLayer || [];
         
-        // Page View Event
+        // Enhanced Page View Event with comprehensive data
         window.adobeDataLayer.push({
             "event": "pageView",
             "page": {
                 "pageName": "Contact Us",
                 "siteSection": "Support",
                 "pageType": "contact",
-                "loginStatus": ""
+                "pageURL": window.location.href,
+                "referrer": document.referrer,
+                "timestamp": new Date().toISOString(),
+                "language": navigator.language,
+                "loginStatus": "guest",
+                "deviceType": /Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? "mobile" : "desktop",
+                "browserName": navigator.userAgent.includes("Chrome") ? "Chrome" : 
+                             navigator.userAgent.includes("Firefox") ? "Firefox" : 
+                             navigator.userAgent.includes("Safari") ? "Safari" : "Other"
             }
         });
         
-        // Link Click Event Handler
+        // Link Click Event Handler for all interactions
         document.addEventListener('DOMContentLoaded', function() {
-            // Add click tracking for navigation links
             document.querySelectorAll('a').forEach(function(link) {
                 link.addEventListener('click', function(e) {
                     var linkText = this.textContent.trim();
                     var linkHref = this.getAttribute('href');
+                    var linkPosition = "Navigation";
+                    var actionType = "navigation";
+                    
+                    // Determine link position based on context
+                    if (this.closest('header')) {
+                        linkPosition = "Header Navigation";
+                    } else if (this.closest('footer')) {
+                        linkPosition = "Footer";
+                    } else if (this.closest('.subscribe')) {
+                        linkPosition = "Newsletter Section";
+                        actionType = "social_media";
+                    }
                     
                     window.adobeDataLayer.push({
                         "event": "linkClick",
                         "page": {
+                            "pageName": "Contact Us",
+                            "siteSection": "Support",
+                            "pageType": "contact",
                             "linkName": linkText || linkHref,
-                            "linkPosition": "Navigation",
+                            "linkPosition": linkPosition,
                             "linkURL": linkHref,
-                            "loginStatus": ""
+                            "loginStatus": "guest",
+                            "timestamp": new Date().toISOString(),
+                            "actionType": actionType
                         }
                     });
                 });
             });
             
-            // Form submission tracking
-            document.getElementById('contact').addEventListener('submit', function(e) {
-                window.adobeDataLayer.push({
-                    "event": "formSubmit",
-                    "page": {
-                        "formName": "Contact Form",
-                        "formType": "contact",
-                        "loginStatus": ""
-                    }
+            // Form submission tracking with enhanced data
+            var contactForm = document.getElementById('contact');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    var formData = new FormData(this);
+                    var name = formData.get('name') || '';
+                    var email = formData.get('email') || '';
+                    var message = formData.get('message') || '';
+                    
+                    window.adobeDataLayer.push({
+                        "event": "linkClick",
+                        "page": {
+                            "pageName": "Contact Us",
+                            "siteSection": "Support",
+                            "pageType": "contact",
+                            "linkName": "Contact Form Submit",
+                            "linkPosition": "Contact Form",
+                            "linkURL": "#",
+                            "loginStatus": "guest",
+                            "timestamp": new Date().toISOString(),
+                            "actionType": "form_submit"
+                        },
+                        "form": {
+                            "formName": "Contact Form",
+                            "formType": "contact",
+                            "hasName": name.length > 0,
+                            "hasEmail": email.length > 0,
+                            "hasMessage": message.length > 0,
+                            "formCompleteness": ((name.length > 0 ? 1 : 0) + (email.length > 0 ? 1 : 0) + (message.length > 0 ? 1 : 0)) / 3
+                        }
+                    });
                 });
-            });
+            }
             
-            // Newsletter subscription tracking
-            document.getElementById('subscribe').addEventListener('submit', function(e) {
-                window.adobeDataLayer.push({
-                    "event": "formSubmit",
-                    "page": {
-                        "formName": "Newsletter Subscription",
-                        "formType": "newsletter",
-                        "loginStatus": ""
-                    }
+            // Newsletter subscription tracking with enhanced data
+            var subscribeForm = document.getElementById('subscribe');
+            if (subscribeForm) {
+                subscribeForm.addEventListener('submit', function(e) {
+                    var formData = new FormData(this);
+                    var name = formData.get('name') || '';
+                    var email = formData.get('email') || '';
+                    
+                    window.adobeDataLayer.push({
+                        "event": "linkClick",
+                        "page": {
+                            "pageName": "Contact Us",
+                            "siteSection": "Support",
+                            "pageType": "contact",
+                            "linkName": "Newsletter Subscribe",
+                            "linkPosition": "Newsletter Form",
+                            "linkURL": "#",
+                            "loginStatus": "guest",
+                            "timestamp": new Date().toISOString(),
+                            "actionType": "newsletter_subscribe"
+                        },
+                        "form": {
+                            "formName": "Newsletter Subscription",
+                            "formType": "newsletter",
+                            "hasName": name.length > 0,
+                            "hasEmail": email.length > 0,
+                            "formCompleteness": ((name.length > 0 ? 1 : 0) + (email.length > 0 ? 1 : 0)) / 2
+                        }
+                    });
                 });
-            });
+            }
+            
+            // Menu trigger (mobile menu) tracking
+            var menuTrigger = document.querySelector('.menu-trigger');
+            if (menuTrigger) {
+                menuTrigger.addEventListener('click', function(e) {
+                    window.adobeDataLayer.push({
+                        "event": "linkClick",
+                        "page": {
+                            "pageName": "Contact Us",
+                            "siteSection": "Support",
+                            "pageType": "contact",
+                            "linkName": "Menu",
+                            "linkPosition": "Header Navigation",
+                            "linkURL": "#",
+                            "loginStatus": "guest",
+                            "timestamp": new Date().toISOString(),
+                            "actionType": "mobile_menu_toggle"
+                        }
+                    });
+                });
+            }
         });
     </script>
     

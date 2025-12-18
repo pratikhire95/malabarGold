@@ -47,27 +47,42 @@ https://templatemo.com/tm-571-hexashop
     <script>
       window.adobeDataLayer = window.adobeDataLayer || [];
 
-      // Page View Event
+      // Enhanced Page View Event with comprehensive cart data
       window.adobeDataLayer.push({
         event: "pageView",
         page: {
           pageName: "Shopping Cart",
           siteSection: "Cart",
           pageType: "cart",
-          loginStatus: "",
+          pageURL: window.location.href,
+          referrer: document.referrer,
+          timestamp: new Date().toISOString(),
+          language: navigator.language,
+          loginStatus: "guest",
+          deviceType: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent)
+            ? "mobile"
+            : "desktop",
+          browserName: navigator.userAgent.includes("Chrome")
+            ? "Chrome"
+            : navigator.userAgent.includes("Firefox")
+            ? "Firefox"
+            : navigator.userAgent.includes("Safari")
+            ? "Safari"
+            : "Other",
         },
+        
       });
 
-      // Link Click Event Handler
+      // Link Click Event Handler for all interactions
       document.addEventListener("DOMContentLoaded", function () {
-        // Add click tracking for navigation links
         document.querySelectorAll("a").forEach(function (link) {
           link.addEventListener("click", function (e) {
             var linkText = this.textContent.trim();
             var linkHref = this.getAttribute("href");
             var linkPosition = "Navigation";
+            var actionType = "navigation";
 
-            // Determine link position based on context
+            // Determine link position and action type based on context
             if (this.closest("header")) {
               linkPosition = "Header Navigation";
             } else if (this.closest("footer")) {
@@ -77,52 +92,79 @@ https://templatemo.com/tm-571-hexashop
             window.adobeDataLayer.push({
               event: "linkClick",
               page: {
+                pageName: "Shopping Cart",
+                siteSection: "Cart",
+                pageType: "cart",
                 linkName: linkText || linkHref,
                 linkPosition: linkPosition,
                 linkURL: linkHref,
-                loginStatus: "",
+                loginStatus: "guest",
+                timestamp: new Date().toISOString(),
+                actionType: actionType,
               },
             });
           });
         });
 
-        // Cart-specific button tracking (if cart buttons exist)
+        // Cart-specific button tracking with enhanced data
         document
-          .querySelectorAll(".cart-button, .checkout-button, .remove-item")
+          .querySelectorAll(".cart-button, .checkout-button, .remove-item, .quantity-button, .update-cart")
           .forEach(function (cartButton) {
             cartButton.addEventListener("click", function (e) {
-              var actionType = "";
-              if (this.classList.contains("checkout-button")) {
-                actionType = "checkout";
-              } else if (this.classList.contains("remove-item")) {
-                actionType = "remove_item";
-              } else {
-                actionType = "cart_action";
+              var actionType = "cart_action";
+              var buttonText = this.textContent.trim();
+
+              if (this.classList.contains("checkout-button") || buttonText.toLowerCase().includes("checkout")) {
+                actionType = "proceed_to_checkout";
+              } else if (this.classList.contains("remove-item") || buttonText.toLowerCase().includes("remove")) {
+                actionType = "remove_from_cart";
+              } else if (this.classList.contains("quantity-button") || buttonText.includes("+") || buttonText.includes("-")) {
+                actionType = "update_quantity";
+              } else if (this.classList.contains("update-cart") || buttonText.toLowerCase().includes("update")) {
+                actionType = "update_cart";
               }
 
               window.adobeDataLayer.push({
-                event: "cartAction",
+                event: "linkClick",
                 page: {
+                  pageName: "Shopping Cart",
+                  siteSection: "Cart",
+                  pageType: "cart",
+                  linkName: buttonText,
+                  linkPosition: "Cart Actions",
+                  linkURL: this.getAttribute("href") || "#",
+                  loginStatus: "guest",
+                  timestamp: new Date().toISOString(),
                   actionType: actionType,
-                  buttonText: this.textContent.trim(),
-                  loginStatus: "",
+                },
+                cart: {
+                  actionType: actionType,
+                  buttonText: buttonText,
                 },
               });
             });
           });
 
         // Menu trigger (mobile menu) tracking
-        document
-          .querySelector(".menu-trigger")
-          .addEventListener("click", function (e) {
+        var menuTrigger = document.querySelector(".menu-trigger");
+        if (menuTrigger) {
+          menuTrigger.addEventListener("click", function (e) {
             window.adobeDataLayer.push({
-              event: "menuToggle",
+              event: "linkClick",
               page: {
+                pageName: "Shopping Cart",
+                siteSection: "Cart",
+                pageType: "cart",
+                linkName: "Menu",
+                linkPosition: "Header Navigation",
+                linkURL: "#",
+                loginStatus: "guest",
+                timestamp: new Date().toISOString(),
                 actionType: "mobile_menu_toggle",
-                loginStatus: "",
               },
             });
           });
+        }
       });
     </script>
 
@@ -364,21 +406,6 @@ https://templatemo.com/tm-571-hexashop
             $("#portfolio").fadeTo(50, 1);
           }, 500);
         });
-      });
-    </script>
-    <script>
-      window.adobeDataLayer = window.adobeDataLayer || [];
-      window.adobeDataLayer.push({
-        event: "page track",
-        page: {
-          pageName: "cart",
-          pageType: "cart",
-          experienceType: "desktop",
-          category: "generic",
-          productName: "New Green Jacket",
-          price: "75",
-          quantity: "1",
-        },
       });
     </script>
   </body>

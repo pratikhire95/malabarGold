@@ -51,45 +51,7 @@ https://templatemo.com/tm-571-hexashop
     <script>
       window.adobeDataLayer = window.adobeDataLayer || [];
 
-      // Enhanced Page View Event with comprehensive data
-      window.adobeDataLayer.push({
-        event: "pageView",
-        page: {
-          pageName: "Products",
-          siteSection: "Catalog",
-          pageType: "category",
-          pageURL: window.location.href,
-          referrer: document.referrer,
-          timestamp: new Date().toISOString(),
-          userAgent: navigator.userAgent,
-          screenResolution: screen.width + "x" + screen.height,
-          viewportSize: window.innerWidth + "x" + window.innerHeight,
-          language: navigator.language,
-          loginStatus: "guest",
-          deviceType: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent)
-            ? "mobile"
-            : "desktop",
-          browserName: navigator.userAgent.includes("Chrome")
-            ? "Chrome"
-            : navigator.userAgent.includes("Firefox")
-            ? "Firefox"
-            : navigator.userAgent.includes("Safari")
-            ? "Safari"
-            : "Other",
-          totalProducts: document.querySelectorAll(".item").length,
-          currentPage: 2,
-          totalPages: 4,
-          productsPerPage: 9,
-          categoryFilter: "all",
-          sortOrder: "default",
-        },
-        ecommerce: {
-          currencyCode: "USD",
-          impressions: [],
-        },
-      });
-
-      // Collect product impressions for enhanced ecommerce tracking
+      // Enhanced Page View Event with comprehensive data including product impressions
       document.addEventListener("DOMContentLoaded", function () {
         var impressions = [];
         document.querySelectorAll(".item").forEach(function (item, index) {
@@ -113,54 +75,64 @@ https://templatemo.com/tm-571-hexashop
             category: category,
             position: index + 1,
             list: "Product Listing Page",
+            brand: "HexaShop",
+            availability: "in_stock",
+            rating: "5.0",
+            reviews: Math.floor(Math.random() * 100) + 50,
           });
         });
 
-        // Push product impressions to data layer
+        // Enhanced Page View Event with all product data
         window.adobeDataLayer.push({
-          event: "productImpressions",
-          ecommerce: {
-            currencyCode: "USD",
-            impressions: impressions,
+          event: "pageView",
+          page: {
+            pageName: "Products",
+            siteSection: "Catalog",
+            pageType: "category",
+            pageURL: window.location.href,
+            referrer: document.referrer,
+            timestamp: new Date().toISOString(),
+            language: navigator.language,
+            loginStatus: "guest",
+            deviceType: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent)
+              ? "mobile"
+              : "desktop",
+            browserName: navigator.userAgent.includes("Chrome")
+              ? "Chrome"
+              : navigator.userAgent.includes("Firefox")
+              ? "Firefox"
+              : navigator.userAgent.includes("Safari")
+              ? "Safari"
+              : "Other",
+            totalProducts: impressions.length,
+            currentPage: 2,
+            totalPages: 4,
+            productsPerPage: 9,
+            categoryFilter: "all",
+            sortOrder: "default",
           },
         });
-      });
 
-      // Link Click Event Handler
-      document.addEventListener("DOMContentLoaded", function () {
-        // Add click tracking for navigation links
+        // Link Click Event Handler for all links
         document.querySelectorAll("a").forEach(function (link) {
           link.addEventListener("click", function (e) {
             var linkText = this.textContent.trim();
             var linkHref = this.getAttribute("href");
             var linkPosition = "Navigation";
+            var actionType = "navigation";
+            var productData = null;
 
-            // Determine link position based on context
+            // Determine link position and action type based on context
             if (this.closest("header")) {
               linkPosition = "Header Navigation";
             } else if (this.closest("footer")) {
               linkPosition = "Footer";
             } else if (this.closest(".pagination")) {
               linkPosition = "Pagination";
-            }
-
-            window.adobeDataLayer.push({
-              event: "linkClick",
-              page: {
-                linkName: linkText || linkHref,
-                linkPosition: linkPosition,
-                linkURL: linkHref,
-                loginStatus: "",
-              },
-            });
-          });
-        });
-
-        // Enhanced product interaction tracking with comprehensive ecommerce data
-        document
-          .querySelectorAll(".item .hover-content a")
-          .forEach(function (productLink, linkIndex) {
-            productLink.addEventListener("click", function (e) {
+              actionType = "pagination";
+            } else if (this.closest(".item .hover-content")) {
+              // Product interaction
+              linkPosition = "Product Grid";
               var productItem = this.closest(".item");
               var productName = productItem
                 .querySelector("h4")
@@ -175,8 +147,6 @@ https://templatemo.com/tm-571-hexashop
               var productIndex = Array.from(
                 document.querySelectorAll(".item")
               ).indexOf(productItem);
-              var actionType = "";
-              var eventName = "";
 
               // Determine category based on image path
               var category = "Unknown";
@@ -184,100 +154,70 @@ https://templatemo.com/tm-571-hexashop
               else if (productImage.includes("women-")) category = "Women";
               else if (productImage.includes("kid-")) category = "Kids";
 
-              // Determine action type and event name based on icon
+              // Determine action type based on icon
               if (this.querySelector(".fa-eye")) {
-                actionType = "view";
-                eventName = "productClick";
+                actionType = "product_view";
               } else if (this.querySelector(".fa-star")) {
-                actionType = "favorite";
-                eventName = "addToWishlist";
+                actionType = "add_to_wishlist";
               } else if (this.querySelector(".fa-shopping-cart")) {
                 actionType = "add_to_cart";
-                eventName = "addToCart";
               }
 
-              // Enhanced product interaction event
-              window.adobeDataLayer.push({
-                event: eventName,
-                page: {
-                  pageName: "Products",
-                  siteSection: "Catalog",
-                  pageType: "category",
-                  loginStatus: "guest",
-                  timestamp: new Date().toISOString(),
-                },
-                product: {
-                  productName: productName,
-                  productID:
-                    "PROD-" + (productIndex + 1).toString().padStart(3, "0"),
-                  productPrice: productPrice,
-                  productCategory: category,
-                  productPosition: productIndex + 1,
-                  productList: "Product Listing Page",
-                  productBrand: "HexaShop",
-                  productAvailability: "in_stock",
-                  productRating: "5.0",
-                  productReviews: Math.floor(Math.random() * 100) + 50,
-                  actionType: actionType,
-                  linkPosition: "Product Grid",
-                  linkURL: this.getAttribute("href"),
-                },
-                ecommerce: {
-                  currencyCode: "USD",
-                  click: {
-                    actionField: {
-                      list: "Product Listing Page",
-                      action: actionType,
-                    },
-                    products: [
-                      {
-                        name: productName,
-                        id:
-                          "PROD-" +
-                          (productIndex + 1).toString().padStart(3, "0"),
-                        price: productPrice,
-                        category: category,
-                        position: productIndex + 1,
-                        list: "Product Listing Page",
-                      },
-                    ],
-                  },
-                },
-              });
-            });
-          });
+              productData = {
+                productName: productName,
+                productID:
+                  "PROD-" + (productIndex + 1).toString().padStart(3, "0"),
+                productPrice: productPrice,
+                productCategory: category,
+                productPosition: productIndex + 1,
+                productList: "Product Listing Page",
+                productBrand: "HexaShop",
+                productAvailability: "in_stock",
+                productRating: "5.0",
+                productReviews: Math.floor(Math.random() * 100) + 50,
+              };
+            }
 
-        // Pagination tracking
-        document
-          .querySelectorAll(".pagination a")
-          .forEach(function (paginationLink) {
-            paginationLink.addEventListener("click", function (e) {
-              var pageNumber = this.textContent.trim();
-
-              window.adobeDataLayer.push({
-                event: "paginationClick",
-                page: {
-                  pageNumber: pageNumber,
-                  linkPosition: "Pagination",
-                  linkURL: this.getAttribute("href"),
-                  loginStatus: "",
-                },
-              });
-            });
-          });
-
-        // Menu trigger (mobile menu) tracking
-        document
-          .querySelector(".menu-trigger")
-          .addEventListener("click", function (e) {
+            // Consolidated linkClick event with all interaction data
             window.adobeDataLayer.push({
-              event: "menuToggle",
+              event: "linkClick",
               page: {
-                actionType: "mobile_menu_toggle",
-                loginStatus: "",
+                pageName: "Products",
+                siteSection: "Catalog",
+                pageType: "category",
+                linkName: linkText || linkHref,
+                linkPosition: linkPosition,
+                linkURL: linkHref,
+                loginStatus: "guest",
+                timestamp: new Date().toISOString(),
+                actionType: actionType,
               },
+              product: productData,
+              ecommerce: productData
+                ? {
+                    currencyCode: "USD",
+                    click: {
+                      actionField: {
+                        list: "Product Listing Page",
+                        action: actionType,
+                      },
+                      products: [
+                        {
+                          name: productData.productName,
+                          id: productData.productID,
+                          price: productData.productPrice,
+                          category: productData.productCategory,
+                          position: productData.productPosition,
+                          list: "Product Listing Page",
+                          brand: "HexaShop",
+                        },
+                      ],
+                    },
+                  }
+                : null,
             });
           });
+        });
       });
     </script>
 

@@ -47,46 +47,67 @@ https://templatemo.com/tm-571-hexashop
     <script>
       window.adobeDataLayer = window.adobeDataLayer || [];
 
-      // Page View Event
+      // Enhanced Page View Event with loan information
       window.adobeDataLayer.push({
         event: "pageView",
         page: {
           pageName: "About Us",
           siteSection: "Information",
           pageType: "about",
-          loginStatus: "",
+          pageURL: window.location.href,
+          referrer: document.referrer,
+          timestamp: new Date().toISOString(),
+          loginStatus: "guest",
+          deviceType: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent)
+            ? "mobile"
+            : "desktop",
+          browserName: navigator.userAgent.includes("Chrome")
+            ? "Chrome"
+            : navigator.userAgent.includes("Firefox")
+            ? "Firefox"
+            : navigator.userAgent.includes("Safari")
+            ? "Safari"
+            : "Other",
         },
       });
 
-      // Link Click Event Handler
+      // Enhanced Link Click Event Handler
       document.addEventListener("DOMContentLoaded", function () {
-        // Add click tracking for navigation links
+        // Add click tracking for all links
         document.querySelectorAll("a").forEach(function (link) {
           link.addEventListener("click", function (e) {
             var linkText = this.textContent.trim();
             var linkHref = this.getAttribute("href");
             var linkPosition = "Navigation";
+            var actionType = "navigation";
 
-            // Determine link position based on context
+            // Determine link position and action type based on context
             if (this.closest("header")) {
               linkPosition = "Header Navigation";
+              actionType = "header_navigation";
             } else if (this.closest("footer")) {
               linkPosition = "Footer";
+              actionType = "footer_navigation";
             }
 
             window.adobeDataLayer.push({
               event: "linkClick",
               page: {
+                pageName: "About Us",
+                siteSection: "Information",
+                pageType: "about",
                 linkName: linkText || linkHref,
                 linkPosition: linkPosition,
                 linkURL: linkHref,
-                loginStatus: "",
+                actionType: actionType,
+                timestamp: new Date().toISOString(),
+                loginStatus: "guest",
               },
             });
           });
         });
 
-        // Service item interaction tracking (for loan information)
+        // Service item interaction tracking consolidated into linkClick
         document
           .querySelectorAll(".service-item")
           .forEach(function (serviceItem) {
@@ -97,28 +118,52 @@ https://templatemo.com/tm-571-hexashop
               var loanDigit = this.querySelector(".loan-digit")
                 ? this.querySelector(".loan-digit").textContent.trim()
                 : "";
+              var loanTenure = this.querySelector(".loan-tenure")
+                ? this.querySelector(".loan-tenure").textContent.trim()
+                : "";
+              var loanMaturity = this.querySelector(".loan-maturity")
+                ? this.querySelector(".loan-maturity").textContent.trim()
+                : "";
 
               window.adobeDataLayer.push({
-                event: "serviceInteraction",
+                event: "linkClick",
                 page: {
-                  serviceName: loanType,
-                  serviceDetails: loanDigit,
-                  actionType: "service_click",
-                  loginStatus: "",
+                  pageName: "About Us",
+                  siteSection: "Information",
+                  pageType: "about",
+                  linkName: loanType,
+                  linkPosition: "Service Item",
+                  linkURL: window.location.href,
+                  actionType: "service_interaction",
+                  timestamp: new Date().toISOString(),
+                  loginStatus: "guest",
+                  serviceDetails: {
+                    serviceName: loanType,
+                    loanDigit: loanDigit,
+                    loanTenure: loanTenure,
+                    loanMaturity: loanMaturity,
+                  },
                 },
               });
             });
           });
 
-        // Menu trigger (mobile menu) tracking
+        // Menu trigger consolidated into linkClick
         document
           .querySelector(".menu-trigger")
           .addEventListener("click", function (e) {
             window.adobeDataLayer.push({
-              event: "menuToggle",
+              event: "linkClick",
               page: {
+                pageName: "About Us",
+                siteSection: "Information",
+                pageType: "about",
+                linkName: "Mobile Menu",
+                linkPosition: "Header",
+                linkURL: window.location.href,
                 actionType: "mobile_menu_toggle",
-                loginStatus: "",
+                timestamp: new Date().toISOString(),
+                loginStatus: "guest",
               },
             });
           });
